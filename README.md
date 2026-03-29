@@ -86,7 +86,14 @@ todo-app/
 │   ├── .env                         # Ortam değişkenleri (git'e yüklenmez)
 │   ├── .env.example                 # Örnek ortam değişkenleri şablonu
 │   └── package.json                 # Bağımlılıklar ve npm scriptleri
-├── frontend/                        # React.js arayüzü (yakında)
+├── frontend/                        # React.js arayüzü
+│   ├── src/
+│   │   ├── App.jsx                  # Ana bileşen & Axios işlemleri
+│   │   ├── index.css                # Premium Dark Mode / Glassmorphism
+│   │   └── main.jsx                 # React root render
+│   ├── index.html                   # HTML template & Fontlar
+│   ├── vite.config.js               # Port: 3000 konfigürasyonu
+│   └── package.json
 ├── .gitignore                       # Git'e yüklenmeyen dosyalar
 └── README.md                        # Bu dosya
 ```
@@ -128,6 +135,21 @@ Sunucu başarıyla başladığında şu çıktıyı görürsünüz:
 🚀 Sunucu http://localhost:5000 adresinde çalışıyor
 🌍 Ortam: development
 ```
+
+### Frontend Kurulumu (Port 3000)
+
+```bash
+# 1. Frontend klasörüne geç
+cd todo-app/frontend
+
+# 2. Bağımlılıkları kur
+npm install
+
+# 3. Geliştirme sunucusunu başlat
+npm run dev
+```
+
+> **Not:** Sistem iki katmanlı (Two-Tier) olduğu için, tam bir test yapmak için **Backend ve Frontend'in aynı anda (iki ayrı terminal penceresinde) çalıştırılması** gerekmektedir.
 
 ---
 
@@ -450,7 +472,7 @@ CORS_ORIGIN=http://localhost:3000
 |-------|--------|----------|
 | 2026-03-29 | `feat: proje iskeleti` | Klasör yapısı, package.json, .gitignore |
 | 2026-03-29 | `feat: backend mimarisi` | Express kurulumu, SQLite şeması, CRUD API |
-| — | `feat: frontend` | React.js arayüzü (yakında) |
+| 2026-03-29 | `feat: modern React frontend UI and backend API integration completed` | React/Vite arayüzü, Axios API entegrasyonu, modern tasarım |
 | — | `feat: cloud deploy` | AWS/Render deployment (yakında) |
 
 ---
