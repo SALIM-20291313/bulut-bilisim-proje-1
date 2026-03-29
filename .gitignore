@@ -1,0 +1,28 @@
+# Bağımlılıklar ve build çıktıları
+node_modules/
+
+# Veritabanı dosyası (üretimde ayrı yönetilir)
+backend/data/
+
+# Ortam değişkenleri (hassas bilgiler)
+.env
+.env.local
+.env.production
+
+# OS dosyaları
+.DS_Store
+Thumbs.db
+
+# IDE dosyaları
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Log dosyaları
+*.log
+npm-debug.log*
+
+# Build çıktıları
+dist/
+build/
