@@ -4,6 +4,21 @@ import './index.css'
 
 const API_URL = 'http://localhost:5000/api/todos'
 
+const formatDate = (dateString) => {
+  if (!dateString) return '';
+  const safeDateString = dateString.includes(' ') ? dateString.replace(' ', 'T') : dateString;
+  const date = new Date(safeDateString);
+  if (isNaN(date.getTime())) return '';
+  
+  return new Intl.DateTimeFormat('tr-TR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(date);
+}
+
 function App() {
   const [todos, setTodos] = useState([])
   const [newTodo, setNewTodo] = useState('')
@@ -210,19 +225,24 @@ function App() {
                     <div className="checkbox">
                       <span className="checkbox-inner">✓</span>
                     </div>
-                    {editingId === todo.id ? (
-                      <input
-                        type="text"
-                        value={editTitle}
-                        onChange={(e) => setEditTitle(e.target.value)}
-                        onBlur={() => handleEditSave(todo.id)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleEditSave(todo.id)}
-                        autoFocus
-                        className="edit-input"
-                      />
-                    ) : (
-                      <span className="todo-title" onDoubleClick={() => handleEditStart(todo)}>{todo.title}</span>
-                    )}
+                    <div className="todo-text-group">
+                      {editingId === todo.id ? (
+                        <input
+                          type="text"
+                          value={editTitle}
+                          onChange={(e) => setEditTitle(e.target.value)}
+                          onBlur={() => handleEditSave(todo.id)}
+                          onKeyDown={(e) => e.key === 'Enter' && handleEditSave(todo.id)}
+                          autoFocus
+                          className="edit-input"
+                        />
+                      ) : (
+                        <span className="todo-title" onDoubleClick={() => handleEditStart(todo)}>{todo.title}</span>
+                      )}
+                      {todo.created_at && (
+                        <span className="todo-date">{formatDate(todo.created_at)}</span>
+                      )}
+                    </div>
                   </label>
                   <div className="todo-actions">
                     {editingId !== todo.id && (

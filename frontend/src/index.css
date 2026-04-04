@@ -228,6 +228,23 @@ button {
   transition: color 0.2s;
 }
 
+.todo-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1;
+}
+
+.todo-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+.todo-item.completed .todo-date {
+  opacity: 0.5;
+}
+
 .todo-actions {
   display: flex;
   gap: 0.5rem;

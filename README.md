@@ -475,6 +475,7 @@ CORS_ORIGIN=http://localhost:3000
 | 2026-03-29 | `feat: modern React frontend UI and backend API integration completed` | React/Vite arayüzü, Axios API entegrasyonu, modern tasarım |
 | 2026-04-05 | `feat: add edit functionality to todos` | Arayüzden görev metinlerini düzenleme özelliği eklendi |
 | 2026-04-05 | `feat: add task filtering (all, pending, completed)` | UI üzerinde görevleri durumlarına göre filtreleme yeteneği eklendi |
+| 2026-04-05 | `feat: add task creation timestamp` | Görevlerin altına eklenme tarihi (zaman damgası) gösterimi eklendi |
 | — | `feat: cloud deploy` | AWS/Render deployment (yakında) |
 
 ---
