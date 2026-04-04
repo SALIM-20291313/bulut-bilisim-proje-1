@@ -185,8 +185,7 @@ function App() {
   return (
     <div className="app-container">
       <div className="header">
-        <h1>Bulut To-Do</h1>
-        <p>İki Katmanlı (Two-Tier) Web Uygulaması</p>
+        <h1>To-Do</h1>
       </div>
 
       <div className="glass-panel top-controls">
