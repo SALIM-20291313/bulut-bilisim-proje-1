@@ -139,6 +139,7 @@ function App() {
 
   const completedCount = todos.filter(t => t.completed === 1 || t.completed === true).length;
   const totalCount = todos.length;
+  const pendingCount = totalCount - completedCount;
   const progressPercent = totalCount === 0 ? 0 : Math.round((completedCount / totalCount) * 100);
 
   let processedTodos = todos.filter(todo => {
@@ -248,24 +249,24 @@ function App() {
 
         {error && <div className="error-message">{error}</div>}
 
-        <div className="filters">
+        <div className="filters" style={{ borderBottom: 'none', paddingBottom: 0, marginBottom: 0 }}>
           <button 
             className={`btn-filter ${filterType === 'all' ? 'active' : ''}`}
             onClick={() => setFilterType('all')}
           >
-            Tümü
+            Tümü ({totalCount})
           </button>
           <button 
             className={`btn-filter ${filterType === 'pending' ? 'active' : ''}`}
             onClick={() => setFilterType('pending')}
           >
-            Bekleyenler
+            Bekleyenler ({pendingCount})
           </button>
           <button 
             className={`btn-filter ${filterType === 'completed' ? 'active' : ''}`}
             onClick={() => setFilterType('completed')}
           >
-            Tamamlananlar
+            Tamamlananlar ({completedCount})
           </button>
         </div>
       </div>
