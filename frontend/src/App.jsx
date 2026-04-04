@@ -268,13 +268,15 @@ function App() {
             Tamamlananlar
           </button>
         </div>
+      </div>
 
-        <div className="progress-section">
+      <div className="glass-panel" style={{ padding: '1.25rem 1.5rem' }}>
+        <div className="progress-section" style={{ marginTop: 0 }}>
           <div className="progress-labels">
             <span>İlerleme Oranı</span>
             <span>%{progressPercent} Tamamlandı ({completedCount}/{totalCount})</span>
           </div>
-          <div className="progress-container">
+          <div className="progress-container" style={{ margin: '0.5rem 0 0 0' }}>
             <div className="progress-fill" style={{ width: `${progressPercent}%` }}></div>
           </div>
         </div>
