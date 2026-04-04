@@ -11,6 +11,7 @@ function App() {
   const [error, setError] = useState(null)
   const [editingId, setEditingId] = useState(null)
   const [editTitle, setEditTitle] = useState('')
+  const [filterType, setFilterType] = useState('all')
 
   // Sayfa yüklendiğinde görevleri çek
   useEffect(() => {
@@ -117,6 +118,13 @@ function App() {
   const completedCount = todos.filter(t => t.completed === 1 || t.completed === true).length;
   const totalCount = todos.length;
 
+  const filteredTodos = todos.filter(todo => {
+    const isCompleted = todo.completed === 1 || todo.completed === true;
+    if (filterType === 'pending') return !isCompleted;
+    if (filterType === 'completed') return isCompleted;
+    return true;
+  });
+
   return (
     <div className="app-container">
       <div className="header">
@@ -145,6 +153,27 @@ function App() {
 
         {error && <div className="error-message">{error}</div>}
 
+        <div className="filters">
+          <button 
+            className={`btn-filter ${filterType === 'all' ? 'active' : ''}`}
+            onClick={() => setFilterType('all')}
+          >
+            Tümü
+          </button>
+          <button 
+            className={`btn-filter ${filterType === 'pending' ? 'active' : ''}`}
+            onClick={() => setFilterType('pending')}
+          >
+            Bekleyenler
+          </button>
+          <button 
+            className={`btn-filter ${filterType === 'completed' ? 'active' : ''}`}
+            onClick={() => setFilterType('completed')}
+          >
+            Tamamlananlar
+          </button>
+        </div>
+
         <div className="stats">
           <span>{totalCount} Görev</span>
           <span>{completedCount} Tamamlandı</span>
@@ -158,9 +187,13 @@ function App() {
           <div className="glass-panel empty-state">
             Henüz hiç görev yok. Hadi bir şeyler ekleyelim!
           </div>
+        ) : filteredTodos.length === 0 ? (
+          <div className="glass-panel empty-state">
+            Bu kategoride görev bulunamadı.
+          </div>
         ) : (
           <ul className="todo-list">
-            {todos.map(todo => {
+            {filteredTodos.map(todo => {
               const takesCompletedState = todo.completed === 1 || todo.completed === true;
               return (
                 <li 
