@@ -9,6 +9,8 @@ function App() {
   const [newTodo, setNewTodo] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [editingId, setEditingId] = useState(null)
+  const [editTitle, setEditTitle] = useState('')
 
   // Sayfa yüklendiğinde görevleri çek
   useEffect(() => {
@@ -68,6 +70,35 @@ function App() {
     } catch (err) {
       console.error(err)
       setError("Görev güncellenemedi.")
+    }
+  }
+
+  const handleEditStart = (todo) => {
+    setEditingId(todo.id)
+    setEditTitle(todo.title)
+  }
+
+  const handleEditSave = async (id) => {
+    if (!editTitle.trim()) {
+      setEditingId(null)
+      return
+    }
+    
+    try {
+      const response = await axios.put(`${API_URL}/${id}`, {
+        title: editTitle.trim()
+      })
+      
+      if (response.data.success) {
+        setTodos(todos.map(todo => 
+          todo.id === id ? { ...todo, title: editTitle.trim() } : todo
+        ))
+      }
+    } catch (err) {
+      console.error(err)
+      setError("Görev güncellenemedi.")
+    } finally {
+      setEditingId(null)
     }
   }
 
@@ -146,9 +177,30 @@ function App() {
                     <div className="checkbox">
                       <span className="checkbox-inner">✓</span>
                     </div>
-                    <span className="todo-title">{todo.title}</span>
+                    {editingId === todo.id ? (
+                      <input
+                        type="text"
+                        value={editTitle}
+                        onChange={(e) => setEditTitle(e.target.value)}
+                        onBlur={() => handleEditSave(todo.id)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleEditSave(todo.id)}
+                        autoFocus
+                        className="edit-input"
+                      />
+                    ) : (
+                      <span className="todo-title" onDoubleClick={() => handleEditStart(todo)}>{todo.title}</span>
+                    )}
                   </label>
                   <div className="todo-actions">
+                    {editingId !== todo.id && (
+                      <button 
+                        onClick={() => handleEditStart(todo)}
+                        className="btn-edit"
+                        title="Görevi Düzenle"
+                      >
+                        ✎
+                      </button>
+                    )}
                     <button 
                       onClick={() => handleDelete(todo.id)}
                       className="btn-delete"
