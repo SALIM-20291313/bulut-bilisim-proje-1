@@ -303,6 +303,7 @@ Content-Type: application/json
 | `title` | string | ✅ Evet | — | Görev başlığı |
 | `description` | string | ❌ Hayır | `""` | Görev açıklaması |
 | `priority` | string | ❌ Hayır | `"medium"` | `low` / `medium` / `high` |
+| `due_date` | string | ❌ Hayır | `null` | Son teslim tarihi (Tarih formatında) |
 
 **Örnek İstek:**
 ```json
@@ -358,6 +359,7 @@ Content-Type: application/json
 | `description` | string | Yeni açıklama |
 | `completed` | boolean | `true` = tamamlandı, `false` = bekliyor |
 | `priority` | string | `low` / `medium` / `high` |
+| `due_date` | string | Son teslim tarihi |
 
 **Örnek İstek (sadece tamamlama durumunu güncelle):**
 ```json
@@ -421,6 +423,7 @@ CREATE TABLE IF NOT EXISTS todos (
   description TEXT    DEFAULT '',
   completed   INTEGER DEFAULT 0,         -- 0: bekliyor, 1: tamamlandı
   priority    TEXT    DEFAULT 'medium',  -- low | medium | high
+  due_date    TEXT,                      -- Son teslim tarihi
   created_at  TEXT    DEFAULT (datetime('now', 'localtime')),
   updated_at  TEXT    DEFAULT (datetime('now', 'localtime'))
 );
@@ -435,6 +438,7 @@ CREATE TABLE IF NOT EXISTS todos (
 | `description` | TEXT | DEFAULT `''` | Görev detay açıklaması |
 | `completed` | INTEGER | DEFAULT `0` | 0 = bekliyor, 1 = tamamlandı |
 | `priority` | TEXT | DEFAULT `'medium'` | Görev önceliği: low/medium/high |
+| `due_date` | TEXT | — | Görevin son teslim tarihi |
 | `created_at` | TEXT | DEFAULT şimdiki zaman | Oluşturulma zamanı |
 | `updated_at` | TEXT | DEFAULT şimdiki zaman | Son güncelleme zamanı |
 
@@ -476,6 +480,7 @@ CORS_ORIGIN=http://localhost:3000
 | 2026-04-05 | `feat: add edit functionality to todos` | Arayüzden görev metinlerini düzenleme özelliği eklendi |
 | 2026-04-05 | `feat: add task filtering (all, pending, completed)` | UI üzerinde görevleri durumlarına göre filtreleme yeteneği eklendi |
 | 2026-04-05 | `feat: add task creation timestamp` | Görevlerin altına eklenme tarihi (zaman damgası) gösterimi eklendi |
+| 2026-04-05 | `feat: mega update - priority, deadline, search, sort...` | Detaylı tarih, öncelik sistemi, dinamik arama ve sıralama ile Progress bar eklendi |
 | — | `feat: cloud deploy` | AWS/Render deployment (yakında) |
 
 ---
