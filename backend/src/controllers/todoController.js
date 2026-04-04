@@ -55,7 +55,7 @@ const getTodoById = (req, res) => {
 // ─── POST /api/todos ───────────────────────────────────────────────────────────
 const createTodo = (req, res) => {
   try {
-    const { title, description, priority } = req.body;
+    const { title, description, priority, due_date } = req.body;
 
     if (!title || title.trim() === '') {
       return errorResponse(res, 'Görev başlığı (title) zorunludur', 400);
@@ -74,6 +74,7 @@ const createTodo = (req, res) => {
       title: title.trim(),
       description: description?.trim() || '',
       priority: priority || 'medium',
+      due_date: due_date || null
     });
 
     return successResponse(res, newTodo, 'Görev başarıyla oluşturuldu', 201);
@@ -87,7 +88,7 @@ const createTodo = (req, res) => {
 const updateTodo = (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, completed, priority } = req.body;
+    const { title, description, completed, priority, due_date } = req.body;
 
     if (title !== undefined && title.trim() === '') {
       return errorResponse(res, 'Görev başlığı boş olamaz', 400);
@@ -107,6 +108,7 @@ const updateTodo = (req, res) => {
       description: description?.trim(),
       completed,
       priority,
+      due_date,
     });
 
     if (!updatedTodo) {

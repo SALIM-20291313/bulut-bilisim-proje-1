@@ -42,19 +42,19 @@ const TodoModel = {
   /**
    * Yeni görev oluştur
    */
-  create({ title, description = '', priority = 'medium' }) {
+  create({ title, description = '', priority = 'medium', due_date = null }) {
     const stmt = db.prepare(`
-      INSERT INTO todos (title, description, priority)
-      VALUES (?, ?, ?)
+      INSERT INTO todos (title, description, priority, due_date)
+      VALUES (?, ?, ?, ?)
     `);
-    const result = stmt.run(title, description, priority);
+    const result = stmt.run(title, description, priority, due_date);
     return this.findById(result.lastInsertRowid);
   },
 
   /**
    * Mevcut görevi güncelle
    */
-  update(id, { title, description, completed, priority }) {
+  update(id, { title, description, completed, priority, due_date }) {
     const todo = this.findById(id);
     if (!todo) return null;
 
@@ -62,13 +62,14 @@ const TodoModel = {
     const updatedDescription = description !== undefined ? description : todo.description;
     const updatedCompleted   = completed !== undefined   ? (completed ? 1 : 0) : todo.completed;
     const updatedPriority    = priority !== undefined    ? priority    : todo.priority;
+    const updatedDueDate     = due_date !== undefined    ? due_date    : todo.due_date;
 
     db.prepare(`
       UPDATE todos
-      SET title = ?, description = ?, completed = ?, priority = ?,
+      SET title = ?, description = ?, completed = ?, priority = ?, due_date = ?,
           updated_at = datetime('now', 'localtime')
       WHERE id = ?
-    `).run(updatedTitle, updatedDescription, updatedCompleted, updatedPriority, id);
+    `).run(updatedTitle, updatedDescription, updatedCompleted, updatedPriority, updatedDueDate, id);
 
     return this.findById(id);
   },

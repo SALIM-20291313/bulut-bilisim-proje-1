@@ -18,10 +18,18 @@ const initializeDatabase = () => {
       description TEXT    DEFAULT '',
       completed   INTEGER DEFAULT 0,
       priority    TEXT    DEFAULT 'medium',
+      due_date    TEXT,
       created_at  TEXT    DEFAULT (datetime('now', 'localtime')),
       updated_at  TEXT    DEFAULT (datetime('now', 'localtime'))
     );
   `);
+
+  try {
+    db.exec(`ALTER TABLE todos ADD COLUMN due_date TEXT`);
+    console.log('✅ Veritabanı güncellendi: due_date sütunu eklendi.');
+  } catch (err) {
+    // Sütun zaten varsa SQLite "duplicate column name" hatası fırlatır, yoksayıyoruz.
+  }
 
   console.log('✅ Veritabanı başlatıldı: todos tablosu hazır.');
 };

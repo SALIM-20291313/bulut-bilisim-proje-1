@@ -27,6 +27,10 @@ function App() {
   const [editingId, setEditingId] = useState(null)
   const [editTitle, setEditTitle] = useState('')
   const [filterType, setFilterType] = useState('all')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [sortBy, setSortBy] = useState('newest')
+  const [newPriority, setNewPriority] = useState('medium')
+  const [newDueDate, setNewDueDate] = useState('')
 
   // Sayfa yüklendiğinde görevleri çek
   useEffect(() => {
@@ -58,11 +62,14 @@ function App() {
     try {
       const response = await axios.post(API_URL, {
         title: newTodo.trim(),
-        priority: 'medium'
+        priority: newPriority,
+        due_date: newDueDate || null
       })
       if (response.data.success) {
         setTodos([...todos, response.data.data])
         setNewTodo('')
+        setNewDueDate('')
+        setNewPriority('medium')
         setError(null)
       }
     } catch (err) {
@@ -132,13 +139,47 @@ function App() {
 
   const completedCount = todos.filter(t => t.completed === 1 || t.completed === true).length;
   const totalCount = todos.length;
+  const progressPercent = totalCount === 0 ? 0 : Math.round((completedCount / totalCount) * 100);
 
-  const filteredTodos = todos.filter(todo => {
+  let processedTodos = todos.filter(todo => {
     const isCompleted = todo.completed === 1 || todo.completed === true;
-    if (filterType === 'pending') return !isCompleted;
-    if (filterType === 'completed') return isCompleted;
+    if (filterType === 'pending' && isCompleted) return false;
+    if (filterType === 'completed' && !isCompleted) return false;
+    
+    if (searchQuery.trim() !== '') {
+      if (!todo.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+        return false;
+      }
+    }
     return true;
   });
+
+  processedTodos.sort((a, b) => {
+    if (sortBy === 'deadline') {
+      if (!a.due_date && b.due_date) return 1;
+      if (a.due_date && !b.due_date) return -1;
+      if (a.due_date && b.due_date) {
+        return new Date(a.due_date) - new Date(b.due_date);
+      }
+      return 0;
+    } else if (sortBy === 'priority') {
+      const pMap = { high: 3, medium: 2, low: 1 };
+      const pA = pMap[a.priority] || 2;
+      const pB = pMap[b.priority] || 2;
+      return pB - pA;
+    } else {
+      return b.id - a.id;
+    }
+  });
+
+  const checkOverdue = (dueDateStr, completed) => {
+    if (!dueDateStr || completed) return false;
+    const due = new Date(dueDateStr);
+    const now = new Date();
+    due.setHours(0,0,0,0);
+    now.setHours(0,0,0,0);
+    return due < now;
+  };
 
   return (
     <div className="app-container">
@@ -147,23 +188,62 @@ function App() {
         <p>İki Katmanlı (Two-Tier) Web Uygulaması</p>
       </div>
 
+      <div className="glass-panel top-controls">
+        <input 
+          type="text" 
+          placeholder="Görevlerde ara..." 
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="search-input"
+        />
+        <select 
+          value={sortBy} 
+          onChange={(e) => setSortBy(e.target.value)}
+          className="sort-select"
+        >
+          <option value="newest">En Yeni</option>
+          <option value="deadline">Son Tarihe Göre</option>
+          <option value="priority">Önem Sırasına Göre</option>
+        </select>
+      </div>
+
       <div className="glass-panel">
-        <form onSubmit={handleAddTodo} className="input-group">
-          <input
-            type="text"
-            value={newTodo}
-            onChange={(e) => setNewTodo(e.target.value)}
-            placeholder="Ne yapmak istersin?"
-            autoComplete="off"
-            maxLength={100}
-          />
-          <button 
-            type="submit" 
-            className="btn-add"
-            disabled={!newTodo.trim()}
-          >
-            Ekle
-          </button>
+        <form onSubmit={handleAddTodo} className="form-container">
+          <div className="input-group">
+            <input
+              type="text"
+              value={newTodo}
+              onChange={(e) => setNewTodo(e.target.value)}
+              placeholder="Ne yapmak istersin?"
+              autoComplete="off"
+              maxLength={100}
+              className="main-todo-input"
+            />
+          </div>
+          <div className="input-group secondary-group">
+            <input 
+              type="date"
+              value={newDueDate}
+              onChange={(e) => setNewDueDate(e.target.value)}
+              className="date-input"
+            />
+            <select 
+              value={newPriority}
+              onChange={(e) => setNewPriority(e.target.value)}
+              className="priority-select"
+            >
+              <option value="low">Düşük</option>
+              <option value="medium">Orta</option>
+              <option value="high">Yüksek Öncelik</option>
+            </select>
+            <button 
+              type="submit" 
+              className="btn-add"
+              disabled={!newTodo.trim()}
+            >
+              Ekle
+            </button>
+          </div>
         </form>
 
         {error && <div className="error-message">{error}</div>}
@@ -189,9 +269,14 @@ function App() {
           </button>
         </div>
 
-        <div className="stats">
-          <span>{totalCount} Görev</span>
-          <span>{completedCount} Tamamlandı</span>
+        <div className="progress-section">
+          <div className="progress-labels">
+            <span>İlerleme Oranı</span>
+            <span>%{progressPercent} Tamamlandı ({completedCount}/{totalCount})</span>
+          </div>
+          <div className="progress-container">
+            <div className="progress-fill" style={{ width: `${progressPercent}%` }}></div>
+          </div>
         </div>
       </div>
 
@@ -202,19 +287,21 @@ function App() {
           <div className="glass-panel empty-state">
             Henüz hiç görev yok. Hadi bir şeyler ekleyelim!
           </div>
-        ) : filteredTodos.length === 0 ? (
+        ) : processedTodos.length === 0 ? (
           <div className="glass-panel empty-state">
-            Bu kategoride görev bulunamadı.
+            Bu kriterlere uygun görev bulunamadı.
           </div>
         ) : (
           <ul className="todo-list">
-            {filteredTodos.map(todo => {
+            {processedTodos.map(todo => {
               const takesCompletedState = todo.completed === 1 || todo.completed === true;
+              const isOverdue = checkOverdue(todo.due_date, takesCompletedState);
               return (
                 <li 
                   key={todo.id} 
-                  className={`glass-panel todo-item ${takesCompletedState ? 'completed' : ''}`}
+                  className={`glass-panel todo-item priority-${todo.priority || 'medium'} ${takesCompletedState ? 'completed' : ''}`}
                 >
+                  <div className="priority-bar"></div>
                   <label className="todo-content">
                     <input 
                       type="checkbox" 
@@ -240,7 +327,12 @@ function App() {
                         <span className="todo-title" onDoubleClick={() => handleEditStart(todo)}>{todo.title}</span>
                       )}
                       {todo.created_at && (
-                        <span className="todo-date">{formatDate(todo.created_at)}</span>
+                        <span className="todo-date">Eklenme: {formatDate(todo.created_at)}</span>
+                      )}
+                      {todo.due_date && (
+                        <span className={`todo-date ${isOverdue ? 'overdue-date' : ''}`}>
+                          Son Tarih: {formatDate(todo.due_date)} {isOverdue ? ' (Gecikmiş)' : ''}
+                        </span>
                       )}
                     </div>
                   </label>
