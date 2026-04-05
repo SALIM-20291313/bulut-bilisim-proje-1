@@ -13,14 +13,7 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
   : ['http://localhost:3000', 'http://127.0.0.1:3000'];
 
 const corsOptions = {
-  origin: (origin, callback) => {
-    // Postman gibi origin olmayan araçlara izin ver
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error(`CORS engellendi: ${origin} kaynağına izin verilmiyor`));
-    }
-  },
+  origin: '*', // Her türlü IP ve domaine açık
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
