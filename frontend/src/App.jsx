@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import './index.css'
 
-const API_URL = 'http://localhost:5000/api/todos'
-
+// Geliştirme ortamında (Dev) localhost:5000 kullan, canlıda (Prod) Nginx üzerinden relative /api yönlendirmesi yap
+const API_URL = import.meta.env.DEV ? 'http://localhost:5000/api/todos' : '/api/todos'
 const formatDate = (dateString) => {
   if (!dateString) return '';
   const safeDateString = dateString.includes(' ') ? dateString.replace(' ', 'T') : dateString;
